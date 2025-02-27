@@ -28,7 +28,6 @@ jobs:
 
       - name: Run tests
         run: |
-          # Add any tests here (e.g., pytest if you have test files)
           echo "Running tests (add actual test commands if available)"
           python -c "import app; print('App imports successfully')"
 
@@ -59,10 +58,22 @@ jobs:
       - name: Log in to Heroku Container Registry
         run: |
           heroku container:login
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Set Heroku stack to container
+        run: |
+          heroku stack:set container -a heart-attack-predictor
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Pull Docker image from Docker Hub
+        run: |
+          docker pull <your-docker-hub-username>/heart-attack-predictor:${{ github.sha }}
 
       - name: Push to Heroku Container Registry
         run: |
-          heroku container:push web -a heart-attack-predictor --arg DOCKER_BUILDKIT=1
+          heroku container:push web -a heart-attack-predictor
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
