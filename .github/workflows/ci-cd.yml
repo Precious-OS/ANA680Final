@@ -31,21 +31,6 @@ jobs:
           echo "Running tests (add actual test commands if available)"
           python -c "import app; print('App imports successfully')"
 
-      - name: Build Docker image
-        run: |
-          docker build -t heart-attack-predictor:${{ github.sha }} .
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker tag heart-attack-predictor:${{ github.sha }} <your-docker-hub-username>/heart-attack-predictor:${{ github.sha }}
-          docker push <your-docker-hub-username>/heart-attack-predictor:${{ github.sha }}
-
   deploy-to-heroku:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -55,30 +40,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to Heroku Container Registry
+      - name: Log in to Heroku
         run: |
-          heroku container:login
+          heroku login -i
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
-      - name: Set Heroku stack to container
+      - name: Add Heroku remote
         run: |
-          heroku stack:set container -a heart-attack-predictor
+          heroku git:remote -a heart-attack-predictor
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
-      - name: Pull Docker image from Docker Hub
+      - name: Deploy to Heroku
         run: |
-          docker pull <your-docker-hub-username>/heart-attack-predictor:${{ github.sha }}
-
-      - name: Push to Heroku Container Registry
-        run: |
-          heroku container:push web -a heart-attack-predictor
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Release to Heroku
-        run: |
-          heroku container:release web -a heart-attack-predictor
+          git push heroku main
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
