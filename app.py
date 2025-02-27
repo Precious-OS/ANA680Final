@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import logging
+import os  # Add this import for accessing environment variables
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -127,4 +128,5 @@ def predict():
 
 # Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.getenv('PORT', 5000))  # Use PORT environment variable, default to 5000 if not set
+    app.run(debug=True, host='0.0.0.0', port=port)
