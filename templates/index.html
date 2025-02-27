@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Attack Survival Prediction in Nigeria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        select.error, input.error {
+            border-color: #ff0000;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #BMIValue {  <!-- Updated from #bmiValue to #BMIValue -->
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        #result.show {
+            display: block;
+        }
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .show-error {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h2>Heart Attack Survival Prediction in Nigeria</h2>
+    <form id="predictionForm">
+        <div class="form-group">
+            <label for="State">State:<span class="error-message" id="State-error">This field is required</span></label>
+            <select id="State" name="State" required>
+                <option value="">Select State</option>
+                <option value="Abia">Abia</option>
+                <option value="Adamawa">Adamawa</option>
+                <option value="Akwa Ibom">Akwa Ibom</option>
+                <option value="Anambra">Anambra</option>
+                <option value="Bauchi">Bauchi</option>
+                <option value="Bayelsa">Bayelsa</option>
+                <option value="Benue">Benue</option>
+                <option value="Borno">Borno</option>
+                <option value="Cross River">Cross River</option>
+                <option value="Delta">Delta</option>
+                <option value="Ebonyi">Ebonyi</option>
+                <option value="Edo">Edo</option>
+                <option value="Ekiti">Ekiti</option>
+                <option value="Enugu">Enugu</option>
+                <option value="FCT">FCT</option>
+                <option value="Gombe">Gombe</option>
+                <option value="Imo">Imo</option>
+                <option value="Jigawa">Jigawa</option>
+                <option value="Kaduna">Kaduna</option>
+                <option value="Kano">Kano</option>
+                <option value="Katsina">Katsina</option>
+                <option value="Kebbi">Kebbi</option>
+                <option value="Kogi">Kogi</option>
+                <option value="Kwara">Kwara</option>
+                <option value="Lagos">Lagos</option>
+                <option value="Nasarawa">Nasarawa</option>
+                <option value="Niger">Niger</option>
+                <option value="Ogun">Ogun</option>
+                <option value="Ondo">Ondo</option>
+                <option value="Osun">Osun</option>
+                <option value="Oyo">Oyo</option>
+                <option value="Plateau">Plateau</option>
+                <option value="Rivers">Rivers</option>
+                <option value="Sokoto">Sokoto</option>
+                <option value="Taraba">Taraba</option>
+                <option value="Yobe">Yobe</option>
+                <option value="Zamfara">Zamfara</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Age_Group">Age Group:<span class="error-message" id="Age_Group-error">This field is required</span></label>
+            <select id="Age_Group" name="Age_Group" required>
+                <option value="">Select Age Group</option>
+                <option value="Youth">Youth</option>
+                <option value="Adult">Adult</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Gender">Gender:<span class="error-message" id="Gender-error">This field is required</span></label>
+            <select id="Gender" name="Gender" required>
+                <option value="">Select Gender</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="BMI">BMI (15-40):<span class="error-message" id="BMI-error">This field is required</span></label>
+            <input type="range" id="BMI" name="BMI" min="15" max="40" step="0.1" value="27.5" required>
+            <span id="BMIValue">27.5</span>  <!-- Updated from #bmiValue to #BMIValue -->
+        </div>
+
+        <div class="form-group">
+            <label for="Smoking_Status">Smoking Status:<span class="error-message" id="Smoking_Status-error">This field is required</span></label>
+            <select id="Smoking_Status" name="Smoking_Status" required>
+                <option value="">Select Smoking Status</option>
+                <option value="Non-Smoker">Non-Smoker</option>
+                <option value="Smoker">Smoker</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Alcohol_Consumption">Alcohol Consumption:<span class="error-message" id="Alcohol_Consumption-error">This field is required</span></label>
+            <select id="Alcohol_Consumption" name="Alcohol_Consumption" required>
+                <option value="">Select Alcohol Consumption</option>
+                <option value="None">None</option>
+                <option value="Low">Low</option>
+                <option value="Moderate">Moderate</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Exercise_Frequency">Exercise Frequency:<span class="error-message" id="Exercise_Frequency-error">This field is required</span></label>
+            <select id="Exercise_Frequency" name="Exercise_Frequency" required>
+                <option value="">Select Exercise Frequency</option>
+                <option value="Rarely">Rarely</option>
+                <option value="Occasionally">Occasionally</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Daily">Daily</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Hypertension">Hypertension:<span class="error-message" id="Hypertension-error">This field is required</span></label>
+            <select id="Hypertension" name="Hypertension" required>
+                <option value="">Select Hypertension</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Diabetes">Diabetes:<span class="error-message" id="Diabetes-error">This field is required</span></label>
+            <select id="Diabetes" name="Diabetes" required>
+                <option value="">Select Diabetes</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Cholesterol_Level">Cholesterol Level:<span class="error-message" id="Cholesterol_Level-error">This field is required</span></label>
+            <select id="Cholesterol_Level" name="Cholesterol_Level" required>
+                <option value="">Select Cholesterol Level</option>
+                <option value="Normal">Normal</option>
+                <option value="Borderline">Borderline</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Family_History">Family History:<span class="error-message" id="Family_History-error">This field is required</span></label>
+            <select id="Family_History" name="Family_History" required>
+                <option value="">Select Family History</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Stress_Level">Stress Level:<span class="error-message" id="Stress_Level-error">This field is required</span></label>
+            <select id="Stress_Level" name="Stress_Level" required>
+                <option value="">Select Stress Level</option>
+                <option value="Low">Low</option>
+                <option value="Moderate">Moderate</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Diet_Type">Diet Type:<span class="error-message" id="Diet_Type-error">This field is required</span></label>
+            <select id="Diet_Type" name="Diet_Type" required>
+                <option value="">Select Diet Type</option>
+                <option value="Healthy">Healthy</option>
+                <option value="Mixed">Mixed</option>
+                <option value="Unhealthy">Unhealthy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Heart_Attack_Severity">Heart Attack Severity:<span class="error-message" id="Heart_Attack_Severity-error">This field is required</span></label>
+            <select id="Heart_Attack_Severity" name="Heart_Attack_Severity" required>
+                <option value="">Select Heart Attack Severity</option>
+                <option value="Mild">Mild</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Severe">Severe</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Hospitalized">Hospitalized:<span class="error-message" id="Hospitalized-error">This field is required</span></label>
+            <select id="Hospitalized" name="Hospitalized" required>
+                <option value="">Select Hospitalized</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Income_Level">Income Level:<span class="error-message" id="Income_Level-error">This field is required</span></label>
+            <select id="Income_Level" name="Income_Level" required>
+                <option value="">Select Income Level</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Urban_Rural">Urban/Rural:<span class="error-message" id="Urban_Rural-error">This field is required</span></label>
+            <select id="Urban_Rural" name="Urban_Rural" required>
+                <option value="">Select Urban/Rural</option>
+                <option value="Urban">Urban</option>
+                <option value="Rural">Rural</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Employment_Status">Employment Status:<span class="error-message" id="Employment_Status-error">This field is required</span></label>
+            <select id="Employment_Status" name="Employment_Status" required>
+                <option value="">Select Employment Status</option>
+                <option value="Employed">Employed</option>
+                <option value="Unemployed">Unemployed</option>
+                <option value="Student">Student</option>
+            </select>
+        </div>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result" class="show"></div> <!-- Initially hidden, shown after prediction -->
+
+    <script>
+        // Update BMI value display as the slider moves
+        document.getElementById('BMI').addEventListener('input', function() {  <!-- Updated from 'bmi' to 'BMI' -->
+            const bmiValue = parseFloat(this.value).toFixed(1); // Round to 1 decimal place for precision
+            document.getElementById('BMIValue').textContent = bmiValue;  <!-- Updated from 'bmiValue' to 'BMIValue' -->
+        });
+
+        // Handle form submission
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Collect form data (matching column names exactly, all starting with capital letters)
+            const formData = {
+                State: document.getElementById('State').value,
+                Age_Group: document.getElementById('Age_Group').value,
+                Gender: document.getElementById('Gender').value,
+                BMI: parseFloat(document.getElementById('BMI').value), // Ensure BMI is a number
+                Smoking_Status: document.getElementById('Smoking_Status').value,
+                Alcohol_Consumption: document.getElementById('Alcohol_Consumption').value,
+                Exercise_Frequency: document.getElementById('Exercise_Frequency').value,
+                Hypertension: document.getElementById('Hypertension').value,
+                Diabetes: document.getElementById('Diabetes').value,
+                Cholesterol_Level: document.getElementById('Cholesterol_Level').value,
+                Family_History: document.getElementById('Family_History').value,
+                Stress_Level: document.getElementById('Stress_Level').value,
+                Diet_Type: document.getElementById('Diet_Type').value,
+                Heart_Attack_Severity: document.getElementById('Heart_Attack_Severity').value,
+                Hospitalized: document.getElementById('Hospitalized').value,
+                Income_Level: document.getElementById('Income_Level').value,
+                Urban_Rural: document.getElementById('Urban_Rural').value,
+                Employment_Status: document.getElementById('Employment_Status').value
+            };
+
+            // Validate form data (enhanced check)
+            let isValid = true;
+            const requiredFields = ['State', 'Age_Group', 'Gender', 'BMI', 'Smoking_Status', 'Alcohol_Consumption',
+                                  'Exercise_Frequency', 'Hypertension', 'Diabetes', 'Cholesterol_Level',
+                                  'Family_History', 'Stress_Level', 'Diet_Type', 'Heart_Attack_Severity',
+                                  'Hospitalized', 'Income_Level', 'Urban_Rural', 'Employment_Status'];
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                const value = field.value.trim();
+
+                if (!value || value === '') {
+                    field.classList.add('error');
+                    errorElement.classList.add('show-error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                    errorElement.classList.remove('show-error');
+                }
+            });
+
+            if (!isValid) {
+                document.getElementById('result').innerHTML = `<p>Error: Please fill in all required fields.</p>`;
+                document.getElementById('result').classList.add('show');
+                return;
+            }
+
+            // Log form data for debugging (both console and result div)
+            console.log('Form data being sent:', formData);
+            document.getElementById('result').innerHTML = `<p>Debug: Sending form data: ${JSON.stringify(formData)}</p>`;
+            document.getElementById('result').classList.add('show');
+
+            // Check if any value is empty, null, or invalid
+            for (let key in formData) {
+                if (!formData[key] || (typeof formData[key] === 'string' && formData[key].trim() === '') ||
+                    (typeof formData[key] === 'number' && isNaN(formData[key]))) {
+                    document.getElementById('result').innerHTML = `<p>Error: Invalid or empty value for ${key}. Please ensure all fields are filled correctly.</p>`;
+                    document.getElementById('result').classList.add('show');
+                    return;
+                }
+            }
+
+            try {
+                // Use relative URL for Fetch API
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text(); // Get the response body for more details
+                    throw new Error(`Network response was not ok. Status: ${response.status}, Message: ${errorText}`);
+                }
+
+                const result = await response.json();
+                let predictionText = result.prediction === 'Yes, the person is predicted to survive.' ?
+                    'Yes, the person is predicted to survive.' : 'No, the person is not predicted to survive.';
+                predictionText += ` (Probability of survival: ${result.probability_survived.toFixed(2)})`
+                document.getElementById('result').innerHTML = `<p>Prediction: ${predictionText}</p>`;
+                document.getElementById('result').classList.add('show');
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                document.getElementById('result').classList.add('show');
+                console.error('Error details:', error); // Log to console for debugging
+            }
+        });
+    </script>
+</body>
+</html>
